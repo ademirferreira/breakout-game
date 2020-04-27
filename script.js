@@ -80,7 +80,7 @@ function drawBricks() {
     column.forEach(brick => {
       ctx.beginPath();
       ctx.rect(brick.x, brick.y, brick.w, brick.h);
-      ctx.fillStyle = brick.visible ? '#0095ddd' : 'transparent';
+      ctx.fillStyle = brick.visible ? '#0095dd' : 'transparent';
       ctx.fill();
       ctx.closePath();
     })
@@ -100,6 +100,46 @@ function movePaddle() {
   }
 }
 
+function moveBall() {
+  ball.x += ball.dx;
+  ball.y += ball.dy;
+
+  // Wall collision (right/left)
+  if (ball.x + ball.size > canvas.width || ball.x - ball.size < 0) {
+    ball.dx *= -1;
+  }
+
+  // Wall collision (top/bottom)
+  if (ball.y + ball.size > canvas.height || ball.y - ball.size < 0) {
+    ball.dy *= -1;
+  }
+
+  // Paddle collision
+  if (ball.x - ball.size > paddle.x &&
+    ball.x + ball.size < paddle.x + paddle.w &&
+    ball.y + ball.size > paddle.y
+  ) {
+    ball.dy = - ball.speed;
+  }
+
+  // Brick collision
+  bricks.forEach(column => {
+    column.forEach(brick => {
+      if (brick.visible) {
+        if (
+          ball.x - ball.size > brick.x &&
+          ball.x - ball.size < brick.x + brick.w &&
+          ball.y + ball.size > brick.y &&
+          ball.y - ball.size < brick.y + brick.h
+        ) {
+          ball.dy *= -1;
+          brick.visible = false;
+        }
+      }
+    })
+  })
+}
+
 // Draw everything
 function draw() {
 
@@ -115,6 +155,7 @@ function draw() {
 // Update canvas drawing and animation
 function update() {
   movePaddle();
+  moveBall();
   // Draw everything
   draw();
   requestAnimationFrame(update);
@@ -130,7 +171,7 @@ function keyDown(e) {
   }
 }
 
-function keyUp() {
+function keyUp(e) {
   if (e.key === 'Right' || e.key === 'ArrowRight' || e.key === 'Left' || e.key === 'ArrowLeft') {
     paddle.dx = 0;
   }
@@ -138,7 +179,7 @@ function keyUp() {
 
 // Keyboard event handlers
 document.addEventListener('keydown', keyDown);
-document.addEventListener('keyUp', keyUp);
+document.addEventListener('keyup', keyUp);
 
 
 // Rules and close event handlers
