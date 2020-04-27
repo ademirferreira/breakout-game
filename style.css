@@ -13,14 +13,14 @@ body {
   margin: 0;
 }
 h1 {
-  font-size: 45px;
+  font-size: 40px;
   color: #fff
 }
 
 canvas {
   background-color: #f0f0f0;
   display: block;
-  border-radius: 5px;
+  border-radius: 5px;  
 }
 
 .btn {
